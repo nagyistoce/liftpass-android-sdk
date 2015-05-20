@@ -34,7 +34,7 @@ public class Liftpass implements LiftpassSyncTaskListener {
 	private static final int PIPE_DISABLED = -1;
 
 	private static final String LiftpassEventsKey 			= "LiftpassEventsKey";
-	private static final String LiftpassGoodsData 			= "LiftpassGoodsData";
+	private static final String LiftpassGoodsDataKey 			= "LiftpassGoodsDataKey";
 	private static final String LiftpassCurrentProgressKey	= "LiftpassCurrentProgressKey";
 	private static final String LiftpassFirstLaunchKey 				= "LiftpassFLKey";
 
@@ -42,29 +42,31 @@ public class Liftpass implements LiftpassSyncTaskListener {
 	private static String LiftpassPort 			= "9090";
 	private static String LiftpassUpdateUrl 		= "/sdk/update/v1/";
 	
-	private static final String LiftpassOSVersion 				= "LiftpassOSVersion";
-	private static final String LiftpassSessionsCount 			= "LiftpassSessionsCount";
-	private static final String LiftpassTotalVirtualPurchases 	= "LiftpassTotalVirtualPurchases";
-	private static final String LiftpassTotalIAPPurchases 		= "LiftpassTotalIAPPurchases";
+	private static final String LiftpassOSVersionMetric 				= "LiftpassOSVersion";
+	private static final String LiftpassSessionsCountMetric 			= "LiftpassSessionsCount";
+	private static final String LiftpassTotalVirtualPurchasesMetric 	= "LiftpassTotalVirtualPurchases";
+	private static final String LiftpassTotalIAPPurchasesMetric 		= "LiftpassTotalIAPPurchases";
 
-	private static final String LiftpassLanguage 			= "LiftpassLanguage";
-	private static final String LiftpassTimezone 			= "LiftpassTimezone";
-	private static final String LiftpassTotalPlayTime 		= "TotalPlayTime";
-	private static final String LiftpassDeviceModel 		= "LiftpassDeviceModel";
+	private static final String LiftpassLanguageMetric 			= "LiftpassLanguage";
+	private static final String LiftpassTimezoneMetric 			= "LiftpassTimezone";
+	private static final String LiftpassTotalPlayTimeMetric 		= "TotalPlayTime";
+	private static final String LiftpassDeviceModelMetric 		= "LiftpassDeviceModel";
 	//private static final String LiftpassTotalDollarsSpent 	= "TotalDollarsSpent";
 	//private static final String LiftpassTotalCurrencySpent 	= "TotalCurrencySpent";
 
-	private static final String LiftpassCurrency1 	= "LiftpassCurrency1";
-	private static final String LiftpassCurrency2 	= "LiftpassCurrency2";
-	private static final String LiftpassCurrency3 	= "LiftpassCurrency3";
-	private static final String LiftpassCurrency4 	= "LiftpassCurrency4";
-	private static final String LiftpassCurrency5 	= "LiftpassCurrency5";
-	private static final String LiftpassCurrency6 	= "LiftpassCurrency6";
-	private static final String LiftpassCurrency7 	= "LiftpassCurrency7";
-	private static final String LiftpassCurrency8 	= "LiftpassCurrency8";
-	private static final String LiftpassVersion 	= "LiftpassVersion";
+	private static final String LiftpassCurrency1Metric 	= "LiftpassCurrency1";
+	private static final String LiftpassCurrency2Metric 	= "LiftpassCurrency2";
+	private static final String LiftpassCurrency3Metric 	= "LiftpassCurrency3";
+	private static final String LiftpassCurrency4Metric 	= "LiftpassCurrency4";
+	private static final String LiftpassCurrency5Metric 	= "LiftpassCurrency5";
+	private static final String LiftpassCurrency6Metric 	= "LiftpassCurrency6";
+	private static final String LiftpassCurrency7Metric 	= "LiftpassCurrency7";
+	private static final String LiftpassCurrency8Metric 	= "LiftpassCurrency8";
+	private static final String LiftpassPricesVersionMetric 	= "LiftpassVersion";
+    
+    
 	private static final String LiftpassVersionKey 	= "LiftpassVersionKey";
-	private static final long LiftpassSaferequestTimeRange = 900000;
+	private static final long LiftpassSafeRequestTimeRange = 900000;
 	
 	private static String appKey;
 	private static String appSecret;
@@ -122,7 +124,7 @@ public class Liftpass implements LiftpassSyncTaskListener {
 	    wasInitialized = true;
 	    pricesDataPath = defaultPricesDataPath;
 	    
-	    parceDefaultGoodsData();
+	    parseDefaultGoodsData();
 	    loadProductsData();
 	}
 	
@@ -504,7 +506,7 @@ public class Liftpass implements LiftpassSyncTaskListener {
 		return loadedGoods;
 	}
 	
-	private void parceDefaultGoodsData() {		
+	private void parseDefaultGoodsData() {
 		AssetManager manager = _launcherActivity.getResources().getAssets();
 		InputStream inputStream = null;
 		
@@ -531,8 +533,8 @@ public class Liftpass implements LiftpassSyncTaskListener {
 	
 	private void loadProductsData() {
 		SharedPreferences prefs = _launcherActivity.getPreferences(Context.MODE_PRIVATE);
-		if (prefs.contains(LiftpassGoodsData)) {
-			Goods = getGoodsDictionary(prefs.getString(LiftpassGoodsData, ""));
+		if (prefs.contains(LiftpassGoodsDataKey)) {
+			Goods = getGoodsDictionary(prefs.getString(LiftpassGoodsDataKey, ""));
 		} else {
 			Goods = DefaultGoods;
 		}
@@ -549,7 +551,7 @@ public class Liftpass implements LiftpassSyncTaskListener {
 		
 		SharedPreferences prefs = _launcherActivity.getPreferences(Context.MODE_PRIVATE);
 		SharedPreferences.Editor editor = prefs.edit();
-		editor.putString(LiftpassGoodsData, GoodsSerializedData);
+		editor.putString(LiftpassGoodsDataKey, GoodsSerializedData);
 		editor.commit();
 		
 		loadProductsData();
@@ -575,71 +577,71 @@ public class Liftpass implements LiftpassSyncTaskListener {
 	}
 	
 	private int getLiftpassOSVersionPipeId() {
-		return getPipeIdWithKey(LiftpassOSVersion);
+		return getPipeIdWithKey(LiftpassOSVersionMetric);
 	}
 	
 	private int getLiftpassLanguagePipeId() {
-		return getPipeIdWithKey(LiftpassLanguage);
+		return getPipeIdWithKey(LiftpassLanguageMetric);
 	}
 	
 	private int getLiftpassTimezonePipeId() {
-		return getPipeIdWithKey(LiftpassTimezone);
+		return getPipeIdWithKey(LiftpassTimezoneMetric);
 	}
 	
 	private int getLiftpassDeviceModelPipeId() {
-		return getPipeIdWithKey(LiftpassDeviceModel);
+		return getPipeIdWithKey(LiftpassDeviceModel)Metric;
 	}
 	
 	private int getLiftpassSessionCountPipeId() {
-		return getPipeIdWithKey(LiftpassSessionsCount);
+		return getPipeIdWithKey(LiftpassSessionsCountMetric);
 	}
 	
 	private int getLiftpassTotalPlayTimePipeId() {
-		return getPipeIdWithKey(LiftpassTotalPlayTime);
+		return getPipeIdWithKey(LiftpassTotalPlayTimeMetric);
 	}
 	
 	private int getLiftpassTotalIAPPurchasesPipeId() {
-		return getPipeIdWithKey(LiftpassTotalIAPPurchases);
+		return getPipeIdWithKey(LiftpassTotalIAPPurchasesMetric);
 	}
 	
 	private int getLiftpassCurrency1PipeId() {
-		return getPipeIdWithKey(LiftpassCurrency1);
+		return getPipeIdWithKey(LiftpassCurrency1Metric);
 	}
 	
 	private int getLiftpassCurrency2PipeId() {
-		return getPipeIdWithKey(LiftpassCurrency2);
+		return getPipeIdWithKey(LiftpassCurrency2Metric);
 	}
 	
 	private int getLiftpassCurrency3PipeId() {
-		return getPipeIdWithKey(LiftpassCurrency3);
+		return getPipeIdWithKey(LiftpassCurrency3Metric);
 	}
 	
 	private int getLiftpassCurrency4PipeId() {
-		return getPipeIdWithKey(LiftpassCurrency4);
+		return getPipeIdWithKey(LiftpassCurrency4Metric);
 	}
 	
 	private int getLiftpassCurrency5PipeId() {
-		return getPipeIdWithKey(LiftpassCurrency5);
+		return getPipeIdWithKey(LiftpassCurrency5Metric);
 	}
 	
 	private int getLiftpassCurrency6PipeId() {
-		return getPipeIdWithKey(LiftpassCurrency6);
+		return getPipeIdWithKey(LiftpassCurrency6Metric);
 	}
 	
 	private int getLiftpassCurrency7PipeId() {
-		return getPipeIdWithKey(LiftpassCurrency7);
+		return getPipeIdWithKey(LiftpassCurrency7Metric);
 	}
 	
 	private int getLiftpassCurrency8PipeId() {
-		return getPipeIdWithKey(LiftpassCurrency8);
+		return getPipeIdWithKey(LiftpassCurrency8Metric);
 	}
 	
 	private int getLiftpassTotalVirtualPurchasesPipeId() {
-		return getPipeIdWithKey(LiftpassTotalVirtualPurchases);
+		return getPipeIdWithKey(LiftpassTotalVirtualPurchasesMetric);
 	}
 	
 	private int getLiftpassVersionPipeId() {
-		return getPipeIdWithKey(LiftpassVersion);
+		return getPipeIdWithKey(LiftpassPricesVersionMetric);
 	}
 	
 	private int getPipeIdWithKey(String key) {
@@ -693,7 +695,7 @@ public class Liftpass implements LiftpassSyncTaskListener {
 		
 		double serverTime = (Double) JSON.get("liftpass-time");
 		double diff = System.currentTimeMillis() / 1000 - serverTime;
-		if (Math.abs(diff) > LiftpassSaferequestTimeRange) {
+		if (Math.abs(diff) > LiftpassSafeRequestTimeRange) {
 			Log.d(TAG, "Time Validation FAILED.");
 			restoreEvents();
 			return;
