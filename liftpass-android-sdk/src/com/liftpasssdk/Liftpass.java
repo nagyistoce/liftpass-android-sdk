@@ -38,8 +38,8 @@ public class Liftpass implements LiftpassSyncTaskListener {
 	private static final String LiftpassCurrentProgressKey	= "LiftpassCurrentProgressKey";
 	private static final String LiftpassFirstLaunchKey 				= "LiftpassFLKey";
 
-	private static String LiftpassServer 		= "http://52.6.100.42";
-	private static String LiftpassPort 			= "9090";
+	private static String LiftpassServer 		= null;
+	private static String LiftpassPort 			= null;
 	private static String LiftpassUpdateUrl 		= "/sdk/update/v1/";
 	
 	private static final String LiftpassOSVersionMetric 				= "LiftpassOSVersion";
@@ -51,8 +51,8 @@ public class Liftpass implements LiftpassSyncTaskListener {
 	private static final String LiftpassTimezoneMetric 			= "LiftpassTimezone";
 	private static final String LiftpassTotalPlayTimeMetric 		= "TotalPlayTime";
 	private static final String LiftpassDeviceModelMetric 		= "LiftpassDeviceModel";
-	//private static final String LiftpassTotalDollarsSpent 	= "TotalDollarsSpent";
-	//private static final String LiftpassTotalCurrencySpent 	= "TotalCurrencySpent";
+	private static final String LiftpassTotalDollarsSpent 	= "TotalDollarsSpent";
+
 
 	private static final String LiftpassCurrency1Metric 	= "LiftpassCurrency1";
 	private static final String LiftpassCurrency2Metric 	= "LiftpassCurrency2";
@@ -97,17 +97,15 @@ public class Liftpass implements LiftpassSyncTaskListener {
 		return _instance;
 	}
 	
-	public void init (String applicationKey, String applicationSecret, String liftpassServer, int liftpassPort, String defaultPricesDataPath, Activity launcher, LiftpassGoodsInfoUpdateListener goodsInfoUpdateListener) {
-
-		LiftpassServer = liftpassServer;
-		LiftpassPort = String.valueOf(liftpassPort);
-		init(applicationKey, applicationSecret, defaultPricesDataPath, launcher, goodsInfoUpdateListener);
-	}
 	
-	public void init(String applicationKey, String applicationSecret, String defaultPricesDataPath, Activity launcher, LiftpassGoodsInfoUpdateListener goodsInfoUpdateListener) {
+	
+	public void init (String applicationKey, String applicationSecret, String liftpassServer, int liftpassPort, String defaultPricesDataPath, Activity launcher, LiftpassGoodsInfoUpdateListener goodsInfoUpdateListener) {
 		if(wasInitialized) {
 	        return;
 	    }
+		
+		LiftpassServer = liftpassServer;
+		LiftpassPort = String.valueOf(liftpassPort);
 		
 		appKey = applicationKey;
 		appSecret = applicationSecret;
@@ -140,12 +138,13 @@ public class Liftpass implements LiftpassSyncTaskListener {
 		saveSessionTime();
 	}
 	
-	public void setApplicationKey(String key, String secret) {
-	    appKey = key;
-	    appSecret = secret;
-	}
-	
 	public void sync() {
+		
+		if(LiftpassServer == null || LiftpassPort == null) {
+			Log.d(TAG, "You should define server and port using Init method before calling the Sync");
+			return;
+		}
+		
 		ArrayList<Object> events = loadEvents();
 		if (!events.isEmpty()) {
 			if (HasPendingRequest) {
@@ -159,10 +158,6 @@ public class Liftpass implements LiftpassSyncTaskListener {
 		}
 	}
 	
-	public void setServer(String server, int port) {
-		LiftpassServer = server;
-		LiftpassPort = String.valueOf(port);
-	}
 	
 	public void serUserId(String id) {
 		userId = id;
@@ -184,7 +179,7 @@ public class Liftpass implements LiftpassSyncTaskListener {
 	    }
 	}
 	
-	private void updateNumberMetric(int metricId, int value) {
+	private void updateNumberMetric(int metricId, float value) {
 	    if(metricId > 7) {
 	        updateProgressMetric(metricId, value);
 	    } else {
@@ -192,10 +187,10 @@ public class Liftpass implements LiftpassSyncTaskListener {
 	    }
 	}
 	
-	private void incrementNumberMetric (int metricId, int value) {		
+	private void incrementNumberMetric (int metricId, float value) {		
 	    if(metricId > 7) {
 	        ArrayList<Object> progress = loadCurrentProgress();
-	        int metricValue = (int) ((Double) progress.get(metricId) + value);
+	        float metricValue = (float) ((Double) progress.get(metricId) + value);
 	        
 	        updateNumberMetric(metricId, metricValue);
 	    } else {
@@ -315,6 +310,10 @@ public class Liftpass implements LiftpassSyncTaskListener {
 
 		if(getLiftpassTotalIAPPurchasesPipeId() != PIPE_DISABLED) {
 			incrementNumberMetric(getLiftpassTotalIAPPurchasesPipeId());
+		}
+		
+		if(getLiftpassTotalDollarsSpentPipeId() != PIPE_DISABLED) {
+			incrementNumberMetric(getLiftpassTotalDollarsSpentPipeId(), price);
 		}
 	}
 		
@@ -643,6 +642,11 @@ public class Liftpass implements LiftpassSyncTaskListener {
 	private int getLiftpassVersionPipeId() {
 		return getPipeIdWithKey(LiftpassPricesVersionMetric);
 	}
+	private int getLiftpassTotalDollarsSpentPipeId() {
+		return getPipeIdWithKey(LiftpassTotalDollarsSpent);
+	}
+	
+	
 	
 	private int getPipeIdWithKey(String key) {
 		SharedPreferences prefs = _launcherActivity.getPreferences(Context.MODE_PRIVATE);
