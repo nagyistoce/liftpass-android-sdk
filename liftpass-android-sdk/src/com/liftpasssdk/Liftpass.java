@@ -589,7 +589,7 @@ public class Liftpass implements LiftpassSyncTaskListener {
 	}
 	
 	private int getLiftpassDeviceModelPipeId() {
-		return getPipeIdWithKey(LiftpassDeviceModel)Metric;
+		return getPipeIdWithKey(LiftpassDeviceModelMetric);
 	}
 	
 	private int getLiftpassSessionCountPipeId() {

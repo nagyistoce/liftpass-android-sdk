@@ -2,55 +2,55 @@ package com.liftpasssdk;
 
 public class LiftpassCurrency {
 	
-	private String _Currency1;
-	private String _Currency2;
-	private String _Currency3;
-	private String _Currency4;
-	private String _Currency5;
-	private String _Currency6;
-	private String _Currency7;
-	private String _Currency8;
+	private String _currency1;
+	private String _currency2;
+	private String _currency3;
+	private String _currency4;
+	private String _currency5;
+	private String _currency6;
+	private String _currency7;
+	private String _currency8;
 	
-	public LiftpassCurrency(String c1, String c2, String c3, String c4, String c5, String c6, String c7, String c8) {
-		_Currency1 = c1;
-		_Currency2 = c2;
-		_Currency3 = c3;
-		_Currency4 = c4;
-		_Currency5 = c5;
-		_Currency6 = c6;
-		_Currency7 = c7;
-		_Currency8 = c8;
+	public LiftpassCurrency(String currency1, String currency2, String currency3, String currency4, String currency5, String currency6, String currency7, String currency8) {
+		_currency1 = currency1;
+		_currency2 = currency2;
+		_currency3 = currency3;
+		_currency4 = currency4;
+		_currency5 = currency5;
+		_currency6 = currency6;
+		_currency7 = currency7;
+		_currency8 = currency8;
 	}
 	
 	public String getCurrency1() {
-		return _Currency1;
+		return _currency1;
 	}
 	
 	public String getCurrency2() {
-		return _Currency2;
+		return _currency2;
 	}
 	
 	public String getCurrency3() {
-		return _Currency3;
+		return _currency3;
 	}
 	
 	public String getCurrency4() {
-		return _Currency4;
+		return _currency4;
 	}
 	
 	public String getCurrency5() {
-		return _Currency5;
+		return _currency5;
 	}
 	
 	public String getCurrency6() {
-		return _Currency6;
+		return _currency6;
 	}
 	
 	public String getCurrency7() {
-		return _Currency7;
+		return _currency7;
 	}
 	
 	public String getCurrency8() {
-		return _Currency8;
+		return _currency8;
 	}
 }

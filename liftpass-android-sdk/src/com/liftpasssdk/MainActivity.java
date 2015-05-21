@@ -16,6 +16,7 @@ public class MainActivity extends Activity implements LiftpassGoodsInfoUpdateLis
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
 		setContentView(R.layout.activity_main);
 		
 		Liftpass.GetInstance().init("4a0fcf37e5a84add901114b9107c572a",
